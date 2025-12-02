@@ -1,214 +1,183 @@
 # GoBattleServer - Pokemon Gacha + Battle System
 
-A Pokemon gacha game with authentic stat mechanics, marketplace, and battle system built with Go and PostgreSQL.
+A Pokemon gacha game with authentic stat mechanics, Discord bot, and REST API built with Go and PostgreSQL.
 
-## Features Implemented
+## 🎮 What's Built
 
-### ✅ Domain Models
-- **Pokemon** with authentic 6-stat system (HP, Atk, Def, SpAtk, SpDef, Spd)
-- **IVs (Individual Values)** - 0-31 for each stat
-- **Natures** - All 25 natures with stat modifiers
-- **Rarity System** - Common → Mythic (6 tiers)
-- **Users** with coins and daily roll cooldowns
+### ✅ Complete REST API
+- User registration and management
+- Gacha rolling system (daily + premium)
+- Pokemon collection management
+- Full CRUD operations
+
+### ✅ Discord Bot
+- **Slash commands:** `/daily`, `/roll`, `/balance`, `/box`
+- **Message commands:** `!daily`, `!roll`, `!balance`, `!box`
+- Beautiful embeds with Pokemon stats
+- Automatic user registration
+
+### ✅ Pokemon System
+- Authentic 6-stat system (HP, Atk, Def, SpAtk, SpDef, Spd)
+- IVs (Individual Values) - 0-31 for each stat
+- 25 Pokemon natures with stat modifiers
+- Rarity tiers: Common → Mythic
+- Estimated value calculation
+
+### ✅ Gacha Mechanics
+- **Free daily rolls** (5 Pokemon, 24hr cooldown)
+- **Pity system** (5th roll guaranteed Rare+)
+- **Premium rolls** (100 coins each)
+- **Multi-roll bonus** (10 rolls = Epic+ guaranteed)
 
 ### ✅ Database
-- PostgreSQL with connection pooling
-- Complete schema with migrations
-- Redis for caching (docker-compose)
-- Indexes for performance
-
-### ✅ Repositories (Data Access)
-- User repository
-- Pokemon Species repository
-- User Pokemon repository
+- PostgreSQL with migrations
+- 150+ Pokemon seeded
+- Redis for caching
 - Transaction-safe operations
 
-### ✅ Services
-- **Gacha Service** with:
-  - Free daily rolls (5 Pokemon)
-  - Pity system (guaranteed Rare+ on 5th roll)
-  - Premium rolls with coins
-  - Multi-roll bonus (10 rolls = 1 Epic+)
+## 🚀 Quick Start
 
-## Quick Start
+### Prerequisites
+- Go 1.21+
+- Docker & Docker Compose
+- Discord account (for bot)
 
-### 1. Start Database
+### 1. Clone & Setup
 ```bash
-# Start PostgreSQL and Redis
-docker-compose up -d
+git clone <your-repo>
+cd GoBattleServer
 
-# Verify containers are running
-docker ps
-```
-
-### 2. Set Up Environment
-```bash
 # Copy environment template
 cp .env.example .env
 
-# (Optional) Edit .env if needed
+# Edit .env and add your Discord bot token
+# Get token from: https://discord.com/developers/applications
 ```
 
-### 3. Verify Build
+### 2. Run Everything
 ```bash
-# Build the project
-go build ./...
-
-# Run tests (when added)
-go test ./...
+# Starts database, API server, and Discord bot
+./run-bot.sh
 ```
 
-## Project Structure
+That's it! 🎉
+
+### Alternative: Run Components Separately
+
+**Terminal 1 - Database:**
+```bash
+docker-compose up -d
+```
+
+**Terminal 2 - API Server:**
+```bash
+go run cmd/api/main.go
+```
+
+**Terminal 3 - Discord Bot:**
+```bash
+export DISCORD_BOT_TOKEN=your_token
+go run cmd/bot/main.go
+```
+
+## 📁 Project Structure
 
 ```
 GoBattleServer/
+├── cmd/
+│   ├── api/                # REST API server
+│   ├── bot/                # Discord bot
+│   └── example/            # Example usage
+│
 ├── internal/
-│   ├── domain/              # Domain models (pure business logic)
-│   │   ├── rarity.go       # Rarity tiers and drop rates
-│   │   ├── nature.go       # Pokemon natures (25 types)
-│   │   ├── pokemon.go      # Pokemon species & instances
-│   │   └── user.go         # User accounts
-│   │
-│   ├── validators/         # Validation logic (separated from domain)
-│   │   ├── rarity_validator.go
-│   │   ├── nature_validator.go
-│   │   ├── pokemon_validator.go
-│   │   └── user_validator.go
-│   │
-│   ├── database/           # Database connection management
-│   │   └── connection.go
-│   │
+│   ├── domain/             # Domain models
+│   ├── validators/         # Validation logic
+│   ├── database/           # Database connection
 │   ├── repository/         # Data access layer
-│   │   ├── interfaces.go
-│   │   ├── postgres_user.go
-│   │   ├── postgres_pokemon_species.go
-│   │   └── postgres_user_pokemon.go
-│   │
-│   └── service/            # Business logic services
-│       └── gacha.go        # Gacha rolling system
+│   ├── service/            # Business logic
+│   ├── handler/            # HTTP handlers
+│   └── bot/                # Discord bot logic
 │
-├── migrations/             # Database schema
-│   └── 001_init_schema.sql
-│
-├── docker-compose.yml      # PostgreSQL + Redis
-├── .env.example           # Environment variables template
-└── go.mod                 # Dependencies
+├── migrations/             # Database migrations
+├── docs/                   # Documentation
+├── docker-compose.yml      # Database setup
+├── .env.example            # Environment template
+├── .gitignore              # Git ignore rules
+└── run-bot.sh              # Startup script
 ```
 
-## Database Schema
+## 📚 Documentation
 
-### Users
-- ID, DiscordID, Coins, LastDailyRoll, CreatedAt
+- **[Architecture Overview](docs/ARCHITECTURE.md)** - System design and roadmap
+- **[Discord Bot Setup](docs/DISCORD_BOT_SETUP.md)** - How to create and run the bot
+- **[Message Commands Guide](docs/MESSAGE_COMMANDS_SETUP.md)** - Using `!` prefix commands
+- **[API Testing Guide](docs/API_TESTING_GUIDE.md)** - Testing REST endpoints with curl
+- **[HTTP API Summary](docs/HTTP_API_SUMMARY.md)** - API architecture details
 
-### Pokemon Species (Static Reference Data)
-- National Dex ID, Name, Rarity
-- Base Stats (6 stats)
-- Sprite URL, Drop Weight
+## 🎮 Discord Commands
 
-### User Pokemon (Unique Instances)
-- ID, UserID, SpeciesID
-- IVs (6 values, 0-31 each)
-- Nature (affects stat multipliers)
-- Level, Acquired At, Favorite, Nickname
+### Slash Commands
+- `/daily` - Free daily roll (5 Pokemon)
+- `/roll <count>` - Premium roll (1-10 Pokemon)
+- `/balance` - Check coin balance
+- `/box [rarity]` - View Pokemon collection
 
-### Market Listings (To Be Implemented)
-- Seller, Pokemon, Price, Status
+### Message Commands
+- `!daily` - Free daily roll
+- `!roll 10` - Premium roll (specify count)
+- `!balance` - Check coins (`!bal`, `!coins`)
+- `!box [rarity]` - View collection (`!collection`)
+- `!help` - Show all commands
 
-### Battles (To Be Implemented)
-- Players, Winner, Wager, Teams
+## 🔮 Next Steps
 
-## Next Steps
+### Phase 2: Marketplace
+- List Pokemon for sale
+- Buy/sell with coins
+- Price history and trends
+- Search and filters
 
-### Immediate (Required for Testing)
-1. **Seed Pokemon Data** - Populate species table with Pokemon
-   - Option A: Manual seed with ~20 Pokemon
-   - Option B: Fetch from PokeAPI (automated)
+### Phase 3: Battle System
+- Turn-based combat
+- Type effectiveness
+- Move system
+- Wager battles
 
-2. **Create Main Application** - Wire everything together
-   - Initialize database connection
-   - Create repository instances
-   - Initialize services
-   - Build CLI or HTTP API to test gacha
+### Phase 4: Advanced Features
+- Trading between users
+- Leaderboards
+- Daily quests
+- Web frontend
 
-### Short Term
-3. **Add Tests** - Unit tests for services and repositories
-4. **Market System** - Buy/sell Pokemon
-5. **Battle System** - Turn-based combat
+## 🎲 Gacha Mechanics
 
-### Medium Term
-6. **Discord Bot** - Slash commands for gacha
-7. **Web Frontend** - React UI for Pokemon box
-8. **Leaderboards** - Top collectors/battlers
-
-## Gacha Mechanics
-
-### Daily Roll (Free)
-- 5 Pokemon per day
-- 24-hour cooldown
-- **Pity**: 5th Pokemon guaranteed Rare or better
-
-### Premium Roll (100 coins each)
-- Pay coins for additional rolls
-- **Bonus**: Every 10th roll guaranteed Epic or better
-
-### Rarity Distribution
+### Rarity Drop Rates
 ```
-Common:    50% (0.500)
-Uncommon:  25% (0.250)
-Rare:      15% (0.150)
-Epic:       7% (0.070)
-Legendary: 2.5% (0.025)
-Mythic:    0.5% (0.005)
+Common:    50%  ⚪
+Uncommon:  25%  🟢
+Rare:      15%  🔵
+Epic:       7%  🟣
+Legendary: 2.5% 🟡
+Mythic:    0.5% 🔴
 ```
 
-## Pokemon Stats System
+### Special Systems
+- **Pity System:** 5th daily roll guaranteed Rare+
+- **10-Roll Bonus:** Guaranteed Epic+ on 10th premium roll
+- **IVs:** Each Pokemon has unique stats (0-31 per stat)
+- **Natures:** 25 types that modify stats (+10%/-10%)
 
-### Calculated Stats Formula
-```
-HP = floor((2 * BaseHP + IV) * Level / 100) + Level + 10
-Other Stats = floor(floor((2 * Base + IV) * Level / 100 + 5) * Nature)
-```
+## 🛠️ Technology Stack
 
-### IVs (Individual Values)
-- 0-31 per stat (randomly generated)
-- Max total: 186 (31 × 6)
-- Affects final stat calculation
+- **Language:** Go 1.21+
+- **Database:** PostgreSQL 16 with pgx/v5
+- **Cache:** Redis 7
+- **Discord:** discordgo
+- **Docker:** PostgreSQL + Redis containers
 
-### Natures
-- 25 types (5 neutral, 20 with effects)
-- +10% to one stat, -10% to another
-- Examples:
-  - **Adamant**: +Atk -SpAtk
-  - **Jolly**: +Spd -SpAtk
-  - **Modest**: +SpAtk -Atk
+## 📖 Learning Highlights
 
-## Technology Stack
-
-- **Language**: Go 1.21+
-- **Database**: PostgreSQL 16
-- **Cache**: Redis 7
-- **Driver**: pgx/v5 (PostgreSQL)
-- **Dependencies**: google/uuid
-
-## Environment Variables
-
-```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=gobattle
-DB_PASSWORD=gobattle_dev
-DB_NAME=gobattle_db
-DB_SSLMODE=disable
-
-REDIS_HOST=localhost
-REDIS_PORT=6379
-
-SERVER_PORT=8080
-```
-
-## Contributing
-
-This is a portfolio/learning project demonstrating:
+This project demonstrates:
 - Clean architecture (domain-driven design)
 - Repository pattern
 - Service layer
