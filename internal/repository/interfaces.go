@@ -61,4 +61,25 @@ type UserPokemonRepository interface {
 	CountByUser(ctx context.Context, userID uuid.UUID) (int, error)
 }
 
+// BattleRepository defines methods for battle data access
+type BattleRepository interface {
+	// Create inserts a new battle
+	Create(ctx context.Context, battle *domain.Battle) error
+
+	// GetByID retrieves a battle by ID
+	GetByID(ctx context.Context, id uuid.UUID) (*domain.Battle, error)
+
+	// Update updates battle information
+	Update(ctx context.Context, battle *domain.Battle) error
+
+	// ListActive retrieves all active battles
+	ListActive(ctx context.Context) ([]*domain.Battle, error)
+
+	// ListByPlayer retrieves all battles for a player
+	ListByPlayer(ctx context.Context, playerID uuid.UUID) ([]*domain.Battle, error)
+
+	// Delete removes a battle
+	Delete(ctx context.Context, id uuid.UUID) error
+}
+
 // TODO: Add MarketListingRepository when market domain model is ready

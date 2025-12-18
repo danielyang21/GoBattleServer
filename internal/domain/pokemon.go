@@ -10,21 +10,23 @@ import (
 
 // PokemonSpecies represents static Pokemon data (from PokeAPI)
 type PokemonSpecies struct {
-	ID            int     `json:"id"`              // National Dex number
-	Name          string  `json:"name"`            // e.g., "pikachu"
-	Rarity        Rarity  `json:"rarity"`          // Gacha rarity tier
-	BaseHP        int     `json:"base_hp"`         // Base stat
-	BaseAttack    int     `json:"base_attack"`     // Base stat
-	BaseDefense   int     `json:"base_defense"`    // Base stat
-	BaseSpAttack  int     `json:"base_sp_attack"`  // Base stat
-	BaseSpDefense int     `json:"base_sp_defense"` // Base stat
-	BaseSpeed     int     `json:"base_speed"`      // Base stat
-	SpriteURL     string  `json:"sprite_url"`      // Image URL
-	DropWeight    float64 `json:"drop_weight"`     // For weighted gacha rolls
+	ID            int          `json:"id"`              // National Dex number
+	Name          string       `json:"name"`            // e.g., "pikachu"
+	Type1         PokemonType  `json:"type1"`           // Primary type
+	Type2         *PokemonType `json:"type2"`           // Secondary type (can be nil)
+	Rarity        Rarity       `json:"rarity"`          // Gacha rarity tier
+	BaseHP        int          `json:"base_hp"`         // Base stat
+	BaseAttack    int          `json:"base_attack"`     // Base stat
+	BaseDefense   int          `json:"base_defense"`    // Base stat
+	BaseSpAttack  int          `json:"base_sp_attack"`  // Base stat
+	BaseSpDefense int          `json:"base_sp_defense"` // Base stat
+	BaseSpeed     int          `json:"base_speed"`      // Base stat
+	SpriteURL     string       `json:"sprite_url"`      // Image URL
+	DropWeight    float64      `json:"drop_weight"`     // For weighted gacha rolls
 }
 
-// IVs represents Individual Values (0-31 for each stat)
-type IVs struct {
+// PokemonIVs represents Individual Values (0-31 for each stat)
+type PokemonIVs struct {
 	HP        int `json:"hp"`
 	Attack    int `json:"attack"`
 	Defense   int `json:"defense"`
@@ -32,6 +34,9 @@ type IVs struct {
 	SpDefense int `json:"sp_defense"`
 	Speed     int `json:"speed"`
 }
+
+// IVs is an alias for PokemonIVs for backwards compatibility
+type IVs = PokemonIVs
 
 // UserPokemon represents a unique Pokemon owned by a user
 type UserPokemon struct {
@@ -113,8 +118,8 @@ func (p *UserPokemon) CalculateHP() int {
 	return int(math.Floor(hp))
 }
 
-// Stats represents the calculated stats for a Pokemon
-type Stats struct {
+// PokemonStats represents the calculated stats for a Pokemon
+type PokemonStats struct {
 	HP        int `json:"hp"`
 	Attack    int `json:"attack"`
 	Defense   int `json:"defense"`
@@ -122,6 +127,9 @@ type Stats struct {
 	SpDefense int `json:"sp_defense"`
 	Speed     int `json:"speed"`
 }
+
+// Stats is an alias for PokemonStats for backwards compatibility
+type Stats = PokemonStats
 
 // GetStats calculates all stats for this Pokemon
 func (p *UserPokemon) GetStats() Stats {
